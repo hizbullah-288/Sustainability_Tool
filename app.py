@@ -60,39 +60,21 @@ with tab1:
         st.success("Data Extracted Successfully!")
         st.text_area("Preview extracted text:", text[:1000] + "...", height=200)
 
-# --- TAB 2: TREND BENCHMARKING (AI-BASED) ---
+# --- TAB 2: TREND BENCHMARKING (HISTORICAL + FUTURE) ---
 with tab2:
-    st.header("Industry Evolution & Benchmarks (AI-Based)")
+    st.header("Industry Evolution & Benchmarks")
     industry = st.text_input("Enter Industry (e.g., On-Demand Tech, Aviation, Banking)")
-
-    if st.button("Generate Past, Present & Future Benchmarks"):
+    
+    if st.button("Search Past, Present & Future Standards"):
         if industry:
-            with st.spinner(f"Analyzing {industry} sustainability trends..."):
-                try:
-                    prompt = f"""
-                    You are a sustainability and ESG research expert.
-
-                    Analyze the industry: {industry}
-
-                    Provide:
-                    1. Historical sustainability standards and practices (2000–2015)
-                    2. Current ESG benchmarks and regulations (2016–2025)
-                    3. Expected future sustainability targets and regulations (2026–2035)
-
-                    Present the answer clearly in bullet points.
-                    """
-
-                    model = genai.GenerativeModel("gemini-pro")
-                    response = model.generate_content(prompt)
-
-                    st.session_state['benchmarks'] = response.text
-
-                    st.write("### Industry Benchmarks:")
-                    st.write(response.text)
-
-                except Exception as e:
-                    st.error("AI benchmark generation failed.")
-                    st.code(str(e))
+            with st.spinner(f"Analyzing {industry} trends..."):
+                search = DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper())
+                # Optimized for historical context + recent updates
+                query = f"Evolution of sustainability standards, recent ESG benchmarks, and upcoming 2026-2030 targets for {industry}"
+                results = search.run(query)
+                st.session_state['benchmarks'] = results
+                st.write("### Found Industry Context:")
+                st.write(results)
         else:
             st.warning("Please enter an industry name.")
 
